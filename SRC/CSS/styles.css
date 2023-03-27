@@ -71,11 +71,12 @@ body{
     transform: translateY(0);
 }
 
-.counter__button:disabled{
-    opacity: 0.2;
+.counter_button:disabled{
+    opacity: 0.2; 
+   
 }
 
-.counter__button:active{
+.counter_button:active{
  background: var(--color-medium-grey);
  transform: translateY(3%);
 }
@@ -83,6 +84,7 @@ body{
 .counter__button_first{
     border-right: 1px solid var(--color-light-grey);
 }
+
 
 /* footer */
 .footer{
