@@ -10,7 +10,8 @@ const divider = '----------------------------------'
 
 // Only change below this line
 
-const owed = 'R ' + parseFloat(leoBalance * -1 + sarahBalance * -1).toFixed(2)
+let owed = 'R ' + parseFloat(leoBalance * -1 + sarahBalance * -1).toFixed(2)
+owed = owed.replace('13','13 ')
 const leo = `${leoName} ${leoSurname.trim()} (Owed: R ${leoBalance * -1})\n`
 const sarah = `${sarahName.trim()} ${sarahSurname} (Owed: R ${(sarahBalance * -1).toFixed(2)})\n`
 const total = "Total amount owed: "
