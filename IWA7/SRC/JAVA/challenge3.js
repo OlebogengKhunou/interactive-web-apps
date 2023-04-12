@@ -18,3 +18,4 @@ const total = "Total amount owed: "
 const result = '\n'+leo + sarah +'\n'+ divider + '\n ' + total + owed + '\n' + divider
 
 console.log(result)
+
