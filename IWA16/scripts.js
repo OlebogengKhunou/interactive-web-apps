@@ -72,7 +72,6 @@ function createHtml(athlete) {
   const firstName = data.response.data[athlete].firstName;
   const surname = data.response.data[athlete].surname;
   const totalraces = data.response.data[athlete].races.length;
-  // const date = new Date(data.response.data[athlete].races[totalraces - 1].date);
   const time = data.response.data[athlete].races[totalraces - 1].time;
   let sum = 0;
   let i = 0;
@@ -96,9 +95,7 @@ function createHtml(athlete) {
 
   // // Change every index in array into new dates and sort
     const datesArray = result.map(dateString => new Date(dateString)).sort((a, b) => b - a)
-    const Datesort = ((datesArray.sort((a, b) => a - b)).reverse())
-    const latestDate = Datesort[0]
-    console.log(latestDate)
+    const latestDate = datesArray[0]
   //======================================================================================//
 
   const title = document.createElement('h2');
