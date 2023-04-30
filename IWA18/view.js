@@ -35,7 +35,6 @@ export const createOrderHtml = (order) => {
             </div>
         </dl>
     `
-
     return element
 }
 
@@ -48,6 +47,8 @@ export const createOrderHtml = (order) => {
  *
  * @returns {HTMLElement}
  */
+// This is for the Table select in html, the option element is created for
+// every element in the Table Array in data.js 
 const createTableOptionsHtml = () => {
     const fragment = document.createDocumentFragment()
 

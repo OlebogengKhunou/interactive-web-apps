@@ -1,3 +1,9 @@
+import { html } from "./view.js"
+import { createOrderHtml } from "./view.js";
+import { createOrderData } from "./data.js";
+import { COLUMNS } from "./data.js";
+import { moveToColumn } from "./view.js";
+
 /**
  * A handler that fires when a user drags over any element inside a column. In
  * order to determine which column the user is dragging over the entire event
@@ -28,27 +34,102 @@ const handleDragOver = (event) => {
 }
 
 
-const handleDragStart = (event) => {}
-const handleDragEnd = (event) => {}
-const handleHelpToggle = (event) => {}
-const handleAddToggle = (event) => {}
-const handleAddSubmit = (event) => {}
-const handleEditToggle = (event) => {}
-const handleEditSubmit = (event) => {}
-const handleDelete = (event) => {}
+const handleDragStart = (event) => { }
+const handleDragEnd = (event) => { }
 
-html.add.cancel.addEventListener('click', handleAddToggle)
+const Created = createOrderData(createOrderHtml).created 
+const Id = createOrderData(createOrderHtml).id
+
+
+// Add overlay
+const handleAddToggle = (event) => {
+    document.querySelector("[data-add-overlay]").style.display = "block";
+}
+const handleCancelToggle = (event) => {
+    document.querySelector("[data-add-overlay]").style.display = "none";
+}
 html.other.add.addEventListener('click', handleAddToggle)
-html.add.form.addEventListener('submit', handleAddSubmit)
+html.add.cancel.addEventListener('click', handleCancelToggle)
+html.add.form.addEventListener('submit', (event) => {
+  event.preventDefault(); // prevent default form submission
 
-html.other.grid.addEventListener('click', handleEditToggle)
-html.edit.cancel.addEventListener('click', handleEditToggle)
-html.edit.form.addEventListener('submit', handleEditSubmit)
-html.edit.delete.addEventListener('click', handleDelete)
+  const formData = new FormData(event.target);
+  const title1 = formData.get('title');
+  const table1 = formData.get('table');
 
-html.help.cancel.addEventListener('click', handleHelpToggle)
+  const data = Object.fromEntries(formData.entries());
+  data.Created = new Date()
+  data.id = Id
+ console.log(data.id)
+ document.querySelector("[data-add-overlay]").style.display = "none";
+ const form1 = createOrderHtml({id:Id,title:title1,table:table1,created:data.Created})
+ console.log(form1)
+ document.querySelector('[data-area="ordered"]').appendChild(form1)
+html.add.form.reset()
+});
+
+
+//Edit Overlay
+const handleEditToggle = (event) => { 
+    document.querySelector("[data-edit-overlay]").style.display = "block";
+}
+const handleCancelEditToggle = (event) => { 
+    document.querySelector("[data-edit-overlay]").style.display = "none";
+}
+const handleDeleteEditToggle = (event) => { 
+//   const del = document.querySelector("[data-order-title] .order__details")
+//   del.remove()
+  document.querySelector("[data-edit-overlay]").style.display = "none";
+}
+html.edit.form.addEventListener('submit', (event) => {
+    event.preventDefault(); // prevent default form submission
+  
+    const formData = new FormData(event.target);
+    const colomn12 = formData.get('column');
+    
+    const newColomn2 = document.querySelector(`[data-column="${colomn12}"]`)
+    moveToColumn(Id, newColomn2)
+    
+  });
+html.edit.delete.addEventListener('click', handleDeleteEditToggle)
+html.edit.cancel.addEventListener('click', handleCancelEditToggle)
+//check if new order exists then displays the edit overlay when order is clicked
+function getElementByIdWhenAvailable(id, callback) {
+    const checkExist = setInterval(function() {
+      const element = document.querySelector(id);
+      if (element) {
+        clearInterval(checkExist);
+        callback(element);
+        const bok = document.querySelector(".order__details")
+        bok.addEventListener('click', handleEditToggle)
+      }
+    }, 10); // check every 100ms
+  }
+  getElementByIdWhenAvailable('[data-order-title]', function(element) {
+    document.querySelector('[data-edit-title]').value = element.innerHTML
+    // do something with the element once it exists
+  });
+  getElementByIdWhenAvailable('[data-order-table]', function(element) {
+    console.log(element.innerHTML);
+    //  document.querySelector('[data-edit-title]').value = element.innerHTML
+    // do something with the element once it exists
+  });
+  
+ 
+
+  
+
+//Help Layout
+const handleHelpToggle = (event) => {
+    document.querySelector("[data-help-overlay]").style.display = "block";
+}
+const handleHelpcloseToggle = (event) => {
+    document.querySelector("[data-help-overlay]").style.display = "none";
+}
+html.help.cancel.addEventListener('click', handleHelpcloseToggle)
 html.other.help.addEventListener('click', handleHelpToggle)
 
+//rtthrhhhdg
 for (const htmlColumn of Object.values(html.columns)) {
     htmlColumn.addEventListener('dragstart', handleDragStart)
     htmlColumn.addEventListener('dragend', handleDragEnd)
