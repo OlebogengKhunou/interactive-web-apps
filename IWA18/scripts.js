@@ -61,15 +61,30 @@ html.add.form.addEventListener('submit', (event) => {
     document.querySelector("[data-add-overlay]").style.display = "none";
     const form1 = createOrderHtml({ id: Id, title: title1, table: table1, created: Created})
     console.log(form1)
-    document.querySelector('[data-area="ordered"]').appendChild(form1)
+    document.querySelector('[data-area="ordered"]').appendChild(form1)  
+   // get all divs with class 'order'
+   const myDivs = document.querySelectorAll('.order');
+
+   // add click event listener to each div
+   myDivs.forEach(div => {
+     div.addEventListener('click', () => {
+       // get details of the clicked div
+       const id = div.dataset.id;
+       const title = div.querySelector('.order__title').textContent;
+       const table = div.querySelector('.order__value').textContent;
+       document.querySelector('[data-edit-title]').value = title
+       document.querySelector('[data-edit-table]').value = table
+       document.querySelector("[data-edit-overlay]").style.display = "block";
+       // do something with the details
+       console.log(`Clicked div ${id} - ${title}: ${table}`);
+     });
+   });
     html.add.form.reset()
 });
-//finished Above continue to work below -------------------------------
+// Only Edit Below -------------------------------
 
 //Edit Overlay
-const handleEditToggle = (event) => {
-    document.querySelector("[data-edit-overlay]").style.display = "block";
-}
+
 const handleCancelEditToggle = (event) => {
     document.querySelector("[data-edit-overlay]").style.display = "none";
 }
@@ -78,44 +93,20 @@ const handleDeleteEditToggle = (event) => {
     //   del.remove()
     document.querySelector("[data-edit-overlay]").style.display = "none";
 }
-html.edit.form.addEventListener('submit', (event) => {
-    event.preventDefault(); // prevent default form submission
+// html.edit.form.addEventListener('submit', (event) => {
+//     event.preventDefault(); // prevent default form submission
 
-    const formData = new FormData(event.target);
-    const colomn12 = formData.get('column');
-    const newColomn2 = document.querySelector(`[data-column="${colomn12}"]`)
-    html.columns['newColomn'] = newColomn2
+//     const formData = new FormData(event.target);
+//     const colomn12 = formData.get('column');
+//     const newColomn2 = document.querySelector(`[data-column="${colomn12}"]`)
+//     html.columns['newColomn'] = newColomn2
 
-    const colomnName = html.columns['newColomn'] = newColomn2
-    moveToColumn(Id, colomnName)
+//     const colomnName = html.columns['newColomn'] = newColomn2
+//     moveToColumn(Id, colomnName)
 
-});
+// });
 html.edit.delete.addEventListener('click', handleDeleteEditToggle)
 html.edit.cancel.addEventListener('click', handleCancelEditToggle)
-//check if new order exists then displays the edit overlay when order is clicked
-function getElementByIdWhenAvailable(id, callback) {
-    const checkExist = setInterval(function () {
-        const element = document.querySelector(id);
-        if (element) {
-            clearInterval(checkExist);
-            callback(element);
-            const bok = document.querySelector(".order")
-            bok.addEventListener('click', handleEditToggle)
-        }
-    }, 10); // check every 100ms
-}
-getElementByIdWhenAvailable('[data-order-title]', function (element) {
-    document.querySelector('[data-edit-title]').value = element.innerHTML
-    // do something with the element once it exists
-});
-getElementByIdWhenAvailable('[data-order-table]', function (element) {
-    console.log(element.innerHTML);
-    //  document.querySelector('[data-edit-title]').value = element.innerHTML
-    // do something with the element once it exists
-});
-
-
-
 
 
 //Help Layout
