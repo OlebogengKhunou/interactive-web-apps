@@ -17,6 +17,7 @@ import { updateDragging } from "./data.js";
  *
  * @param {Event} event 
  */
+
 const handleDragOver = (event) => {
     event.preventDefault();
     const path = event.path || event.composedPath()
@@ -33,10 +34,13 @@ const handleDragOver = (event) => {
     if (!column) return
     updateDragging({ over: column })
     updateDraggingHtml({ over: column })
+
 }
 
-
-const handleDragStart = (event) => { }
+const handleDragStart = (event) => {
+    // const id = event.target.dataset.id;
+    // console.log(event.dataTransfer.setData("text/plain", id))
+}
 const handleDragEnd = (event) => { }
 
 
@@ -80,38 +84,36 @@ html.edit.delete.addEventListener('click', handleDeleteEditToggle)
 html.edit.cancel.addEventListener('click', handleCancelEditToggle)
 //check whatever I click has a dataset id, 
 //if yes then use in querySelector
-const onClick = (event) => {
-   if(event.target.dataset.id){
-   const id = event.target.dataset.id
-   document.querySelector("[data-edit-overlay]").style.display = "block";
+document.addEventListener('click', function (event) {
+    const id = event.target.dataset.id;
+    if (id) {
+        console.log(`U clicked : ${id}`);
+        document.querySelector("[data-edit-overlay]").style.display = "block";
 
-   const div = document.querySelector(`[data-id="${id}"]`);
-   const title = div.querySelector('[data-order-title]').textContent;
-   const table = div.querySelector('[data-order-table]').textContent;
+        const div = document.querySelector(`[data-id="${id}"]`);
+        const title = div.querySelector('[data-order-title]').textContent;
+        const table = div.querySelector('[data-order-table]').textContent;
 
-   document.querySelector('[data-edit-title]').value = title
-   document.querySelector('[data-edit-table]').value = table
+        document.querySelector('[data-edit-title]').value = title
+        document.querySelector('[data-edit-table]').value = table
 
-    html.edit.form.addEventListener('submit', (event) => {
-        event.preventDefault(); // prevent default form submission
-    
-        const formData = new FormData(event.target);
-        const title2 = formData.get('title');
-        const table2 = formData.get('table');
-        const colomn12 = formData.get('column');
+        html.edit.form.addEventListener('submit', (event) => {
+            event.preventDefault(); // prevent default form submission
 
-        const Order1 = document.querySelector(`[data-id="${id}"]`)
-        Order1.querySelector('[data-order-table]').innerHTML = table2
-        Order1.querySelector('[data-order-title]').innerHTML = title2
-        document.querySelector("[data-edit-overlay]").style.display = "none";
-        const newColomn = document.querySelector(`[data-column="${colomn12}"]`)
-        moveToColumn(id, newColomn)
-    });
-   }
-  }
-  window.addEventListener('click', onClick);
+            const formData = new FormData(event.target);
+            const title2 = formData.get('title');
+            const table2 = formData.get('table');
+            const colomn12 = formData.get('column');
 
-
+            const Order1 = document.querySelector(`[data-id="${id}"]`)
+            Order1.querySelector('[data-order-table]').innerHTML = table2
+            Order1.querySelector('[data-order-title]').innerHTML = title2
+            document.querySelector("[data-edit-overlay]").style.display = "none";
+            const newColomn = document.querySelector(`[data-column="${colomn12}"]`)
+            moveToColumn(id, newColomn)
+        });
+    }
+});
 
 //Help Layout
 const handleHelpToggle = (event) => {
@@ -123,7 +125,7 @@ const handleHelpcloseToggle = (event) => {
 html.help.cancel.addEventListener('click', handleHelpcloseToggle)
 html.other.help.addEventListener('click', handleHelpToggle)
 
-//rtthrhhhdg
+//Dragging
 for (const htmlColumn of Object.values(html.columns)) {
     htmlColumn.addEventListener('dragstart', handleDragStart)
     htmlColumn.addEventListener('dragend', handleDragEnd)
@@ -132,3 +134,6 @@ for (const htmlColumn of Object.values(html.columns)) {
 for (const htmlArea of Object.values(html.area)) {
     htmlArea.addEventListener('dragover', handleDragOver)
 }
+
+//Dragging2
+//  document.a
