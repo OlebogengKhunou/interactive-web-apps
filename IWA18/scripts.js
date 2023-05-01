@@ -3,6 +3,8 @@ import { createOrderHtml } from "./view.js";
 import { createOrderData } from "./data.js";
 import { COLUMNS } from "./data.js";
 import { moveToColumn } from "./view.js";
+import { updateDraggingHtml } from "./view.js";
+import { updateDragging } from "./data.js";
 
 /**
  * A handler that fires when a user drags over any element inside a column. In
@@ -38,7 +40,7 @@ const handleDragStart = (event) => { }
 const handleDragEnd = (event) => { }
 
 
-// Add overlay finished
+// Add overlay 
 const handleAddToggle = (event) => {
     document.querySelector("[data-add-overlay]").style.display = "block";
 }
@@ -63,10 +65,9 @@ html.add.form.addEventListener('submit', (event) => {
     document.querySelector('[data-area="ordered"]').appendChild(form1)
     html.add.form.reset()
 });
-// Only Edit Below -------------------------------
+
 
 //Edit Overlay
-
 const handleCancelEditToggle = (event) => {
     document.querySelector("[data-edit-overlay]").style.display = "none";
 }
@@ -75,6 +76,10 @@ const handleDeleteEditToggle = (event) => {
     del.remove()
     document.querySelector("[data-edit-overlay]").style.display = "none";
 }
+html.edit.delete.addEventListener('click', handleDeleteEditToggle)
+html.edit.cancel.addEventListener('click', handleCancelEditToggle)
+//check whatever I click has a dataset id, 
+//if yes then use in querySelector
 const onClick = (event) => {
    if(event.target.dataset.id){
    const id = event.target.dataset.id
@@ -102,16 +107,10 @@ const onClick = (event) => {
         const newColomn = document.querySelector(`[data-column="${colomn12}"]`)
         moveToColumn(id, newColomn)
     });
-    return false;
-
    }
   }
   window.addEventListener('click', onClick);
 
-
-// });
-html.edit.delete.addEventListener('click', handleDeleteEditToggle)
-html.edit.cancel.addEventListener('click', handleCancelEditToggle)
 
 
 //Help Layout
