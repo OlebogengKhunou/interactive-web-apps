@@ -59,26 +59,8 @@ html.add.form.addEventListener('submit', (event) => {
     const table1 = formData.get('table');
 
     document.querySelector("[data-add-overlay]").style.display = "none";
-    const form1 = createOrderHtml({ id: Id, title: title1, table: table1, created: Created})
-    console.log(form1)
-    document.querySelector('[data-area="ordered"]').appendChild(form1)  
-   // get all divs with class 'order'
-   const myDivs = document.querySelectorAll('.order');
-
-   // add click event listener to each div
-   myDivs.forEach(div => {
-     div.addEventListener('click', () => {
-       // get details of the clicked div
-       const id = div.dataset.id;
-       const title = div.querySelector('.order__title').textContent;
-       const table = div.querySelector('.order__value').textContent;
-       document.querySelector('[data-edit-title]').value = title
-       document.querySelector('[data-edit-table]').value = table
-       document.querySelector("[data-edit-overlay]").style.display = "block";
-       // do something with the details
-       console.log(`Clicked div ${id} - ${title}: ${table}`);
-     });
-   });
+    const form1 = createOrderHtml({ id: Id, title: title1, table: table1, created: Created })
+    document.querySelector('[data-area="ordered"]').appendChild(form1)
     html.add.form.reset()
 });
 // Only Edit Below -------------------------------
@@ -89,20 +71,43 @@ const handleCancelEditToggle = (event) => {
     document.querySelector("[data-edit-overlay]").style.display = "none";
 }
 const handleDeleteEditToggle = (event) => {
-    //   const del = document.querySelector("[data-order-title] .order__details")
-    //   del.remove()
+    const del = document.querySelector(".order")
+    del.remove()
     document.querySelector("[data-edit-overlay]").style.display = "none";
 }
-// html.edit.form.addEventListener('submit', (event) => {
-//     event.preventDefault(); // prevent default form submission
+const onClick = (event) => {
+   if(event.target.dataset.id){
+   const id = event.target.dataset.id
+   document.querySelector("[data-edit-overlay]").style.display = "block";
 
-//     const formData = new FormData(event.target);
-//     const colomn12 = formData.get('column');
-//     const newColomn2 = document.querySelector(`[data-column="${colomn12}"]`)
-//     html.columns['newColomn'] = newColomn2
+   const div = document.querySelector(`[data-id="${id}"]`);
+   const title = div.querySelector('[data-order-title]').textContent;
+   const table = div.querySelector('[data-order-table]').textContent;
 
-//     const colomnName = html.columns['newColomn'] = newColomn2
-//     moveToColumn(Id, colomnName)
+   document.querySelector('[data-edit-title]').value = title
+   document.querySelector('[data-edit-table]').value = table
+
+    html.edit.form.addEventListener('submit', (event) => {
+        event.preventDefault(); // prevent default form submission
+    
+        const formData = new FormData(event.target);
+        const title2 = formData.get('title');
+        const table2 = formData.get('table');
+        const colomn12 = formData.get('column');
+
+        const Order1 = document.querySelector(`[data-id="${id}"]`)
+        Order1.querySelector('[data-order-table]').innerHTML = table2
+        Order1.querySelector('[data-order-title]').innerHTML = title2
+        document.querySelector("[data-edit-overlay]").style.display = "none";
+        const newColomn = document.querySelector(`[data-column="${colomn12}"]`)
+        moveToColumn(id, newColomn)
+    });
+    return false;
+
+   }
+  }
+  window.addEventListener('click', onClick);
+
 
 // });
 html.edit.delete.addEventListener('click', handleDeleteEditToggle)
