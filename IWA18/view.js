@@ -140,7 +140,8 @@ export const updateDraggingHtml = (newDragging) => {
 export const moveToColumn = (id, newColumn) => {
     const htmlSource = document.querySelector(`[data-id="${id}"]`) 
     const duplicate = htmlSource.cloneNode(true)
-    html.columns[newColumn].appendChild(duplicate)
+    // html.columns[newColumn].appendChild(duplicate)
+    newColumn.appendChild(duplicate)
     htmlSource.remove()
 }
 
