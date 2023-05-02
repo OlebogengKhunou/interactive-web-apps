@@ -96,7 +96,6 @@ html.add.form.addEventListener('submit', (event) => {
 
 //check whatever I click has a dataset id, 
 //if yes then use in querySelector
-
 const handleCancelEditToggle = (event) => {
     document.querySelector("[data-edit-overlay]").style.display = "none";
 }
@@ -170,7 +169,6 @@ html.help.cancel.addEventListener('click', handleHelpcloseToggle)
 html.other.help.addEventListener('click', handleHelpToggle)
 
 //Dragging
-
 for (const htmlArea of Object.values(html.area)) {
     htmlArea.addEventListener("dragover", handleDragOver);
     htmlArea.addEventListener("dragstart", handleDragStart);
