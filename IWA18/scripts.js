@@ -32,15 +32,18 @@ const handleDragOver = (event) => {
     }
 
     if (!column) return
+       document.addEventListener('drag', function (event) {
+        const id = event.target.dataset.id;
+        document.querySelector('[data-edit-column]').value = column
+        const column1 = document.querySelector(`[data-area="${column}"]`)
+        moveToColumn(id, column1)
+
+    });
     updateDragging({ over: column })
     updateDraggingHtml({ over: column })
-
 }
 
-const handleDragStart = (event) => {
-    // const id = event.target.dataset.id;
-    // console.log(event.dataTransfer.setData("text/plain", id))
-}
+const handleDragStart = (event) => { }
 const handleDragEnd = (event) => { }
 
 
@@ -115,6 +118,7 @@ document.addEventListener('click', function (event) {
     }
 });
 
+
 //Help Layout
 const handleHelpToggle = (event) => {
     document.querySelector("[data-help-overlay]").style.display = "block";
@@ -135,5 +139,3 @@ for (const htmlArea of Object.values(html.area)) {
     htmlArea.addEventListener('dragover', handleDragOver)
 }
 
-//Dragging2
-//  document.a
