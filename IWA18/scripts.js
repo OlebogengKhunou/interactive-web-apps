@@ -1,7 +1,6 @@
 import { html } from "./view.js"
 import { createOrderHtml } from "./view.js";
 import { createOrderData } from "./data.js";
-import { COLUMNS } from "./data.js";
 import { moveToColumn } from "./view.js";
 import { updateDraggingHtml } from "./view.js";
 import { updateDragging } from "./data.js";
@@ -32,19 +31,38 @@ const handleDragOver = (event) => {
     }
 
     if (!column) return
-       document.addEventListener('drag', function (event) {
-        const id = event.target.dataset.id;
-        document.querySelector('[data-edit-column]').value = column
-        const column1 = document.querySelector(`[data-area="${column}"]`)
-        moveToColumn(id, column1)
-
-    });
     updateDragging({ over: column })
     updateDraggingHtml({ over: column })
 }
 
-const handleDragStart = (event) => { }
-const handleDragEnd = (event) => { }
+//Dragged Handlers
+let dragged;
+
+const handleDragStart = (e) => {
+    dragged = e.target;
+};
+
+const handleDragDrop = (e) => {
+    e.target.append(dragged);
+    e.preventDefault();
+    const path = e.path || e.composedPath()
+    let column = null
+
+    for (const element of path) {
+        const { area } = element.dataset
+        if (area) {
+            column = area
+            document.querySelector('[data-edit-column]').value = column
+            break;
+        }
+    }
+};
+
+const handleDragEnd = (e) => {
+    const background = e.target.closest("section");
+    background.style.backgroundColor = "";
+
+};
 
 
 // Add overlay 
@@ -75,48 +93,70 @@ html.add.form.addEventListener('submit', (event) => {
 
 
 //Edit Overlay
+
+//check whatever I click has a dataset id, 
+//if yes then use in querySelector
+
 const handleCancelEditToggle = (event) => {
     document.querySelector("[data-edit-overlay]").style.display = "none";
 }
-const handleDeleteEditToggle = (event) => {
-    const del = document.querySelector(".order")
-    del.remove()
-    document.querySelector("[data-edit-overlay]").style.display = "none";
-}
-html.edit.delete.addEventListener('click', handleDeleteEditToggle)
-html.edit.cancel.addEventListener('click', handleCancelEditToggle)
-//check whatever I click has a dataset id, 
-//if yes then use in querySelector
-document.addEventListener('click', function (event) {
-    const id = event.target.dataset.id;
-    if (id) {
-        console.log(`U clicked : ${id}`);
-        document.querySelector("[data-edit-overlay]").style.display = "block";
 
-        const div = document.querySelector(`[data-id="${id}"]`);
-        const title = div.querySelector('[data-order-title]').textContent;
-        const table = div.querySelector('[data-order-table]').textContent;
-
-        document.querySelector('[data-edit-title]').value = title
-        document.querySelector('[data-edit-table]').value = table
-
-        html.edit.form.addEventListener('submit', (event) => {
-            event.preventDefault(); // prevent default form submission
-
-            const formData = new FormData(event.target);
-            const title2 = formData.get('title');
-            const table2 = formData.get('table');
-            const colomn12 = formData.get('column');
-
-            const Order1 = document.querySelector(`[data-id="${id}"]`)
-            Order1.querySelector('[data-order-table]').innerHTML = table2
-            Order1.querySelector('[data-order-title]').innerHTML = title2
-            document.querySelector("[data-edit-overlay]").style.display = "none";
-            const newColomn = document.querySelector(`[data-column="${colomn12}"]`)
-            moveToColumn(id, newColomn)
-        });
+const handleEditToggle = (event) => {
+    const overlay = html.edit.overlay;
+    const cancelBtn = html.edit.cancel;
+    const input = html.edit.title;
+    const select = html.edit.table;
+    const option = html.edit.column;
+    event.target.dataset.id ? overlay.style.display = "block" : undefined;
+    const id = event.target.dataset.id ? event.target.dataset.id : undefined;
+    input.value = event.target.dataset.id
+        ? event.target.querySelector(".order__title").textContent
+        : undefined;
+    select.value = event.target.dataset.id
+        ? event.target.querySelector(".order__value").textContent
+        : undefined;
+    let section = document.querySelector(`[data-id="${id}"]`);
+    option.value = section ? section.closest("section").dataset.area : "";
+    if (event.target === cancelBtn) {
+        overlay.style.display = "none";
     }
-});
+    html.edit.delete.id = id;
+};
+
+const handleEditSubmit = (event) => {
+    event.preventDefault();
+    const editId = html.edit.delete.id;
+    const overlay = html.edit.overlay;
+
+    const formData = new FormData(event.target);
+    const title2 = formData.get('title');
+    const table2 = formData.get('table');
+    const colomn12 = formData.get('column');
+
+    const Order1 = document.querySelector(`[data-id="${editId}"]`)
+    Order1.querySelector('[data-order-table]').innerHTML = table2
+    Order1.querySelector('[data-order-title]').innerHTML = title2
+    document.querySelector("[data-edit-overlay]").style.display = "none";
+    const newColomn = document.querySelector(`[data-column="${colomn12}"]`)
+    moveToColumn(editId, newColomn)
+    event.target.reset();
+    overlay.style.display = "none";
+};
+
+const handleDelete = (event) => {
+    const idToBeDeleted = html.edit.delete.id;
+    const orderToBeDeleted = document.querySelector(
+        `[data-id="${idToBeDeleted}"]`
+    );
+    const overlay = html.edit.overlay;
+    orderToBeDeleted.remove();
+    overlay.style.display = "none";
+};
+
+html.other.grid.addEventListener("click", handleEditToggle);
+html.edit.cancel.addEventListener("click", handleCancelEditToggle);
+html.edit.form.addEventListener("submit", handleEditSubmit);
+html.edit.delete.addEventListener("click", handleDelete);
 
 
 //Help Layout
@@ -130,12 +170,11 @@ html.help.cancel.addEventListener('click', handleHelpcloseToggle)
 html.other.help.addEventListener('click', handleHelpToggle)
 
 //Dragging
-for (const htmlColumn of Object.values(html.columns)) {
-    htmlColumn.addEventListener('dragstart', handleDragStart)
-    htmlColumn.addEventListener('dragend', handleDragEnd)
-}
 
 for (const htmlArea of Object.values(html.area)) {
-    htmlArea.addEventListener('dragover', handleDragOver)
+    htmlArea.addEventListener("dragover", handleDragOver);
+    htmlArea.addEventListener("dragstart", handleDragStart);
+    htmlArea.addEventListener("drop", handleDragDrop);
+    htmlArea.addEventListener("dragend", handleDragEnd);
 }
 
